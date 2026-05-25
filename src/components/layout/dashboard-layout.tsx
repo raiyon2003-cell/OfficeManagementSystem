@@ -33,7 +33,7 @@ export function DashboardLayout({
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-background text-foreground">
       <div className="hidden lg:flex">
         <Sidebar
           role={role}

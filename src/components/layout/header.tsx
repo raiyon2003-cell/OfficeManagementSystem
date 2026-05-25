@@ -55,15 +55,15 @@ export function Header({
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:px-6",
-        className
+        "sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-border bg-card/95 px-4 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-card/80 sm:px-6",
+        className,
       )}
     >
       {showMenuButton && (
         <Button
           variant="ghost"
           size="icon"
-          className="lg:hidden"
+          className="text-foreground lg:hidden"
           onClick={onMenuClick}
           aria-label="Open navigation menu"
         >
@@ -73,11 +73,11 @@ export function Header({
 
       <div className="flex-1" />
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <Button
           variant="ghost"
           size="icon"
-          className="relative"
+          className="relative text-muted-foreground hover:text-foreground"
           aria-label="Notifications"
           asChild
         >
@@ -97,6 +97,7 @@ export function Header({
         <Button
           variant="ghost"
           size="icon"
+          className="text-muted-foreground hover:text-foreground"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           aria-label="Toggle theme"
         >
@@ -111,26 +112,28 @@ export function Header({
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="relative h-9 w-9 rounded-full"
+              className="relative ml-1 h-9 w-9 rounded-full ring-2 ring-primary/20"
               aria-label="User menu"
             >
               <Avatar className="h-9 w-9">
                 <AvatarImage src={user.avatarUrl} alt={user.name} />
-                <AvatarFallback>{initials}</AvatarFallback>
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+                  {initials}
+                </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{user.name}</p>
+                <p className="text-sm font-semibold leading-none">{user.name}</p>
                 <p className="text-xs leading-none text-muted-foreground">
                   {user.email}
                 </p>
                 {user.role && (
-                  <p className="pt-1 text-xs text-muted-foreground capitalize">
-                    {user.role.toLowerCase()}
-                  </p>
+                  <Badge variant="secondary" className="mt-2 w-fit text-[10px]">
+                    {user.role.replace(/_/g, " ")}
+                  </Badge>
                 )}
               </div>
             </DropdownMenuLabel>
@@ -142,13 +145,14 @@ export function Header({
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/settings">
-                Settings
-              </Link>
+              <Link href="/settings">Settings</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href="/logout" className="text-destructive focus:text-destructive">
+              <Link
+                href="/logout"
+                className="text-destructive focus:text-destructive"
+              >
                 <LogOut className="mr-2 h-4 w-4" />
                 Log out
               </Link>

@@ -9,23 +9,25 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+          "border-transparent bg-primary text-primary-foreground",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "border-transparent bg-secondary text-secondary-foreground",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
+          "border-transparent bg-destructive text-destructive-foreground",
+        outline:
+          "border-border text-foreground",
         success:
-          "border-transparent bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
+          "border-transparent bg-[#588157]/15 text-[#344e41] dark:bg-[#588157]/25 dark:text-[#a8d4a6]",
         warning:
-          "border-transparent bg-amber-500/15 text-amber-700 dark:text-amber-400",
-        info: "border-transparent bg-blue-500/15 text-blue-700 dark:text-blue-400",
+          "border-transparent bg-[#b8860b]/15 text-[#7a5c08] dark:bg-[#d69e2e]/20 dark:text-[#f6e05e]",
+        info:
+          "border-transparent bg-[#28666e]/15 text-[#28666e] dark:bg-[#28666e]/25 dark:text-[#8ec8d4]",
       },
     },
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 export interface BadgeProps

@@ -73,45 +73,57 @@ export function Sidebar({
     (item) =>
       !item.adminOnly ||
       role === ROLES.ADMIN ||
-      role === ROLES.SUPER_ADMIN
+      role === ROLES.SUPER_ADMIN,
   );
 
   return (
     <TooltipProvider delayDuration={0}>
       <aside
         className={cn(
-          "flex h-full flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-all duration-300",
+          "flex h-full flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground shadow-lg transition-all duration-300 ease-in-out",
           collapsed ? "w-[72px]" : "w-64",
-          className
+          className,
         )}
       >
         <div
           className={cn(
-            "flex h-16 items-center border-b border-sidebar-border px-4",
-            collapsed ? "justify-center" : "justify-between"
+            "flex h-16 items-center border-b border-sidebar-border/60 px-4",
+            collapsed ? "justify-center" : "justify-between",
           )}
         >
           {!collapsed && (
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Building2 className="h-4 w-4" />
+            <Link href="/dashboard" className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-accent shadow-sm">
+                <Building2 className="h-5 w-5 text-sidebar-accent-foreground" />
               </div>
-              <span className="text-sm font-semibold">Office Manager</span>
+              <div className="flex flex-col">
+                <span className="text-sm font-semibold leading-tight text-sidebar-foreground">
+                  Office Manager
+                </span>
+                <span className="text-[10px] font-normal uppercase tracking-wider text-sidebar-muted">
+                  CONTEG
+                </span>
+              </div>
+            </Link>
+          )}
+          {collapsed && (
+            <Link href="/dashboard" className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-accent">
+              <Building2 className="h-5 w-5 text-sidebar-accent-foreground" />
             </Link>
           )}
           {onCollapsedChange && (
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 shrink-0"
+              className={cn(
+                "h-8 w-8 shrink-0 text-sidebar-foreground/70 hover:bg-white/10 hover:text-sidebar-foreground",
+                collapsed && "absolute -right-3 top-4 z-10 rounded-full border border-sidebar-border bg-sidebar shadow-md",
+              )}
               onClick={() => onCollapsedChange(!collapsed)}
               aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
               <ChevronLeft
-                className={cn(
-                  "h-4 w-4 transition-transform",
-                  collapsed && "rotate-180"
-                )}
+                className={cn("h-4 w-4 transition-transform", collapsed && "rotate-180")}
               />
             </Button>
           )}
@@ -130,14 +142,14 @@ export function Sidebar({
                   href={item.href}
                   onClick={onNavigate}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
                     isActive
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                    collapsed && "justify-center px-2"
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
+                      : "text-sidebar-foreground/75 hover:bg-white/10 hover:text-sidebar-foreground",
+                    collapsed && "justify-center px-2",
                   )}
                 >
-                  <Icon className="h-4 w-4 shrink-0" />
+                  <Icon className={cn("h-4 w-4 shrink-0", isActive && "text-sidebar-accent-foreground")} />
                   {!collapsed && <span>{item.title}</span>}
                 </Link>
               );
@@ -146,7 +158,9 @@ export function Sidebar({
                 return (
                   <Tooltip key={item.href}>
                     <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
-                    <TooltipContent side="right">{item.title}</TooltipContent>
+                    <TooltipContent side="right" className="font-medium">
+                      {item.title}
+                    </TooltipContent>
                   </Tooltip>
                 );
               }
@@ -158,9 +172,9 @@ export function Sidebar({
 
         {!collapsed && (
           <>
-            <Separator className="bg-sidebar-border" />
+            <Separator className="bg-sidebar-border/50" />
             <div className="p-4">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-sidebar-muted">
                 Office Management System
               </p>
             </div>

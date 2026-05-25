@@ -3,64 +3,94 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ─── CONTEG Brand Tokens ─────────────────────────────────────────────────── */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --brand-lime: #588157;
+  --brand-olive: #819171;
+  --brand-charcoal: #344e41;
+  --brand-deep-teal: #073b4c;
+  --brand-steel-teal: #28666e;
+
+  /* Light mode — clean platinum-style backgrounds */
+  --background: #f8faf8;
+  --foreground: #344e41;
+  --card: #ffffff;
+  --card-foreground: #344e41;
+  --popover: #ffffff;
+  --popover-foreground: #344e41;
+  --primary: #588157;
+  --primary-foreground: #ffffff;
+  --secondary: #e8efe6;
+  --secondary-foreground: #344e41;
+  --muted: #eef2ec;
+  --muted-foreground: #819171;
+  --accent: #28666e;
+  --accent-foreground: #ffffff;
+  --destructive: #c53030;
+  --destructive-foreground: #ffffff;
+  --success: #588157;
+  --success-foreground: #ffffff;
+  --warning: #b8860b;
+  --warning-foreground: #ffffff;
+  --border: #d4ddd2;
+  --input: #d4ddd2;
+  --ring: #588157;
+  --radius: 0.5rem;
+
+  /* Sidebar — charcoal green with lime active state */
+  --sidebar: #344e41;
+  --sidebar-foreground: #f4f7f4;
+  --sidebar-border: #28666e;
+  --sidebar-accent: #588157;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-muted: #819171;
+
+  /* Charts — brand palette */
+  --chart-1: #588157;
+  --chart-2: #28666e;
+  --chart-3: #819171;
+  --chart-4: #344e41;
+  --chart-5: #073b4c;
 }
 
+/* Dark mode — Night Forest (#073b4c) background */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --background: #073b4c;
+  --foreground: #f0f5f4;
+  --card: #28666e;
+  --card-foreground: #f0f5f4;
+  --popover: #28666e;
+  --popover-foreground: #f0f5f4;
+  --primary: #588157;
+  --primary-foreground: #ffffff;
+  --secondary: #344e41;
+  --secondary-foreground: #f0f5f4;
+  --muted: #344e41;
+  --muted-foreground: #819171;
+  --accent: #588157;
+  --accent-foreground: #ffffff;
+  --destructive: #e53e3e;
+  --destructive-foreground: #ffffff;
+  --success: #588157;
+  --success-foreground: #ffffff;
+  --warning: #d69e2e;
+  --warning-foreground: #073b4c;
+  --border: #28666e;
+  --input: #28666e;
+  --ring: #588157;
+
+  --sidebar: #073b4c;
+  --sidebar-foreground: #f0f5f4;
+  --sidebar-border: #28666e;
+  --sidebar-accent: #588157;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-muted: #819171;
+
+  --chart-1: #7cb87a;
+  --chart-2: #4a9aaa;
+  --chart-3: #a3b596;
+  --chart-4: #588157;
+  --chart-5: #819171;
 }
 
 @theme inline {
@@ -80,6 +110,10 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -88,12 +122,16 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-brand-lime: var(--brand-lime);
+  --color-brand-olive: var(--brand-olive);
+  --color-brand-charcoal: var(--brand-charcoal);
+  --color-brand-deep-teal: var(--brand-deep-teal);
+  --color-brand-steel-teal: var(--brand-steel-teal);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-source-sans), system-ui, sans-serif;
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -106,8 +144,58 @@
     @apply border-border;
   }
 
+  html {
+    @apply scroll-smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
-    font-family: var(--font-sans), system-ui, sans-serif;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+  }
+
+  h1 {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+}
+
+/* Branded scrollbar */
+@layer utilities {
+  .brand-gradient-auth {
+    background: linear-gradient(
+      135deg,
+      var(--brand-deep-teal) 0%,
+      var(--brand-charcoal) 45%,
+      var(--brand-steel-teal) 100%
+    );
+  }
+
+  .brand-card-elevated {
+    box-shadow:
+      0 1px 3px rgb(52 78 65 / 8%),
+      0 4px 12px rgb(7 59 76 / 6%);
   }
 }

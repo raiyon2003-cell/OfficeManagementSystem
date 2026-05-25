@@ -27,37 +27,42 @@ const stats = [
     key: "visitorsToday" as const,
     title: "Visitors Today",
     icon: UserCheck,
-    color: "text-blue-600",
-    bg: "bg-blue-500/10",
+    color: "text-[#588157]",
+    bg: "bg-[#588157]/10",
+    border: "border-[#588157]/20",
   },
   {
     key: "upcomingMeetings" as const,
     title: "Upcoming Meetings",
     icon: Calendar,
-    color: "text-violet-600",
-    bg: "bg-violet-500/10",
+    color: "text-[#28666e]",
+    bg: "bg-[#28666e]/10",
+    border: "border-[#28666e]/20",
   },
   {
     key: "roomOccupancyPercent" as const,
     title: "Room Occupancy",
     icon: Percent,
     suffix: "%",
-    color: "text-emerald-600",
-    bg: "bg-emerald-500/10",
+    color: "text-[#344e41] dark:text-[#a8d4a6]",
+    bg: "bg-[#344e41]/10",
+    border: "border-[#344e41]/20",
   },
   {
     key: "lowStockCount" as const,
     title: "Low Stock Items",
     icon: Package,
-    color: "text-amber-600",
-    bg: "bg-amber-500/10",
+    color: "text-[#819171]",
+    bg: "bg-[#819171]/15",
+    border: "border-[#819171]/25",
   },
   {
     key: "pendingApprovals" as const,
     title: "Pending Approvals",
     icon: AlertCircle,
-    color: "text-rose-600",
-    bg: "bg-rose-500/10",
+    color: "text-[#073b4c] dark:text-[#8ec8d4]",
+    bg: "bg-[#073b4c]/10",
+    border: "border-[#073b4c]/20",
   },
 ];
 
@@ -81,7 +86,7 @@ export function StatCards({
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {stats.map((s) => (
-          <Card key={s.key}>
+          <Card key={s.key} className="border-border/60">
             <CardHeader className="pb-2">
               <Skeleton className="h-4 w-24" />
             </CardHeader>
@@ -106,18 +111,19 @@ export function StatCards({
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
+            whileHover={{ y: -2 }}
           >
-            <Card>
+            <Card className={cn("border transition-shadow hover:shadow-md", stat.border)}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   {stat.title}
                 </CardTitle>
-                <div className={cn("rounded-lg p-2", stat.bg)}>
+                <div className={cn("rounded-lg border p-2", stat.bg, stat.border)}>
                   <Icon className={cn("h-4 w-4", stat.color)} />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-2xl font-semibold text-foreground">
                   {value}
                   {stat.suffix ?? ""}
                 </div>
