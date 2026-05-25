@@ -1,0 +1,58 @@
+/* FullCalendar v6 minimal styles (CSS files are no longer shipped as separate exports) */
+.fc {
+  --fc-border-color: var(--border);
+  --fc-button-bg-color: var(--primary);
+  --fc-button-border-color: var(--primary);
+  --fc-button-hover-bg-color: color-mix(in oklch, var(--primary) 90%, black);
+  --fc-button-hover-border-color: color-mix(in oklch, var(--primary) 90%, black);
+  --fc-button-active-bg-color: color-mix(in oklch, var(--primary) 80%, black);
+  --fc-button-active-border-color: color-mix(in oklch, var(--primary) 80%, black);
+  --fc-today-bg-color: color-mix(in oklch, var(--primary) 8%, transparent);
+  --fc-event-bg-color: var(--primary);
+  --fc-event-border-color: var(--primary);
+  --fc-page-bg-color: var(--card);
+  --fc-neutral-bg-color: var(--muted);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.fc .fc-button {
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.375rem 0.75rem;
+  text-transform: capitalize;
+}
+
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number,
+.fc .fc-timegrid-slot-label-cushion {
+  color: var(--foreground);
+  font-size: 0.875rem;
+}
+
+.fc .fc-scrollgrid,
+.fc .fc-scrollgrid td,
+.fc .fc-scrollgrid th {
+  border-color: var(--border);
+}
+
+.fc .fc-event {
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 2px 4px;
+}
+
+.fc .fc-timegrid-now-indicator-line {
+  border-color: var(--destructive);
+}
+
+.fc .fc-timegrid-now-indicator-arrow {
+  border-color: var(--destructive);
+  color: var(--destructive);
+}

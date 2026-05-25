@@ -1,0 +1,927 @@
+// Office Management Web Application — Prisma schema (PostgreSQL / Supabase)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// DATABASE_URL is configured in prisma.config.ts (Prisma 7+)
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum RoleName {
+  SUPER_ADMIN
+  OFFICE_ADMIN
+  EMPLOYEE
+  MANAGEMENT
+}
+
+enum VisitorStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+  EXPIRED
+}
+
+enum VisitorPassStatus {
+  ISSUED
+  ACTIVE
+  RETURNED
+  LOST
+  EXPIRED
+}
+
+enum VisitorLogAction {
+  CREATED
+  UPDATED
+  APPROVED
+  REJECTED
+  CHECKED_IN
+  CHECKED_OUT
+  PASS_ISSUED
+  PASS_RETURNED
+  CANCELLED
+  REMARK_ADDED
+}
+
+enum MeetingRoomStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+  OUT_OF_SERVICE
+}
+
+enum RoomEquipmentStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+  DAMAGED
+  UNAVAILABLE
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum RecurringFrequency {
+  DAILY
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+}
+
+enum InventoryCategoryType {
+  PANTRY
+  CLEANING
+  CONSUMABLES
+  MISCELLANEOUS
+}
+
+enum StockMovementType {
+  IN
+  OUT
+  ADJUSTMENT
+}
+
+enum InventoryItemStatus {
+  ACTIVE
+  LOW_STOCK
+  OUT_OF_STOCK
+  DISCONTINUED
+}
+
+enum StationeryItemStatus {
+  ACTIVE
+  LOW_STOCK
+  OUT_OF_STOCK
+  DISCONTINUED
+}
+
+enum DocumentType {
+  LETTERHEAD
+  ENVELOPE
+  FORM
+  CERTIFICATE
+  BROCHURE
+  OTHER
+}
+
+enum ReprintRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PurchaseRequestStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  ORDERED
+  PARTIALLY_DELIVERED
+  DELIVERED
+  CANCELLED
+}
+
+enum ApprovalEntityType {
+  VISITOR
+  ROOM_BOOKING
+  PURCHASE_REQUEST
+  REPRINT_REQUEST
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  SUCCESS
+  ERROR
+  APPROVAL
+  REMINDER
+  SYSTEM
+}
+
+enum ReportType {
+  VISITOR
+  BOOKING
+  INVENTORY
+  STATIONERY
+  PURCHASE
+  EXPENSE
+  VENDOR
+  AUDIT
+  CUSTOM
+}
+
+enum ReportStatus {
+  PENDING
+  GENERATING
+  COMPLETED
+  FAILED
+}
+
+enum OfficeExpenseCategory {
+  UTILITIES
+  MAINTENANCE
+  SUPPLIES
+  TRAVEL
+  EQUIPMENT
+  RENT
+  INSURANCE
+  PROFESSIONAL_SERVICES
+  OTHER
+}
+
+enum VendorStatus {
+  ACTIVE
+  INACTIVE
+  BLACKLISTED
+  PENDING_VERIFICATION
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Auth & RBAC
+// ─────────────────────────────────────────────────────────────────────────────
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  firstName    String    @map("first_name")
+  lastName     String    @map("last_name")
+  phone        String?
+  department   String?
+  isActive     Boolean   @default(true) @map("is_active")
+  lastLoginAt  DateTime? @map("last_login_at")
+  deletedAt    DateTime? @map("deleted_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  roles               UserRole[]
+  refreshTokens       RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+
+  hostedVisitors       Visitor[]            @relation("VisitorHost")
+  approvedVisitors     Visitor[]            @relation("VisitorApprover")
+  visitorLogsPerformed VisitorLog[]         @relation("VisitorLogPerformer")
+  organizedBookings    RoomBooking[]        @relation("BookingOrganizer")
+  approvedBookings     RoomBooking[]        @relation("BookingApprover")
+  stockMovements       StockMovement[]
+  stationeryIssuances  StationeryIssuance[] @relation("StationeryIssuanceEmployee")
+  stationeryIssued     StationeryIssuance[] @relation("StationeryIssuanceIssuer")
+  purchaseRequests     PurchaseRequest[]
+  approvalsGiven       Approval[]           @relation("ApprovalApprover")
+  notifications        Notification[]
+  activityLogs         ActivityLog[]
+  officeExpenses       OfficeExpense[]
+  reportsGenerated     Report[]
+  auditLogs            AuditLog[]
+  reprintRequests      ReprintRequest[]     @relation("ReprintRequester")
+  reprintApprovals     ReprintRequest[]     @relation("ReprintApprover")
+
+  @@index([email])
+  @@index([department])
+  @@index([isActive])
+  @@index([deletedAt])
+  @@index([createdAt])
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        RoleName @unique
+  description String?
+  isSystem    Boolean  @default(false) @map("is_system")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  users       UserRole[]
+  permissions RolePermission[]
+
+  @@index([name])
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  module      String
+  action      String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  roles RolePermission[]
+
+  @@index([module])
+  @@index([module, action])
+  @@map("permissions")
+}
+
+model UserRole {
+  userId    String   @map("user_id")
+  roleId    String   @map("role_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  roleId       String   @map("role_id")
+  permissionId String   @map("permission_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  token     String    @unique
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@index([revokedAt])
+  @@map("refresh_tokens")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  token     String    @unique
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("password_reset_tokens")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Visitor management
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Visitor {
+  id              String        @id @default(cuid())
+  fullName        String        @map("full_name")
+  email           String?
+  phone           String
+  company         String?
+  purpose         String
+  idType          String?       @map("id_type")
+  idNumber        String?       @map("id_number")
+  vehicleNumber   String?       @map("vehicle_number")
+  photoUrl        String?       @map("photo_url")
+  scheduledDate   DateTime      @map("scheduled_date") @db.Date
+  scheduledTime   String?       @map("scheduled_time")
+  checkInAt       DateTime?     @map("check_in_at")
+  checkOutAt      DateTime?     @map("check_out_at")
+  hostId          String        @map("host_id")
+  status          VisitorStatus @default(PENDING)
+  approvedById    String?       @map("approved_by_id")
+  approvedAt      DateTime?     @map("approved_at")
+  rejectionReason String?       @map("rejection_reason")
+  badgeNumber     String?       @map("badge_number")
+  notes           String?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  host       User          @relation("VisitorHost", fields: [hostId], references: [id])
+  approvedBy User?         @relation("VisitorApprover", fields: [approvedById], references: [id])
+  logs       VisitorLog[]
+  passes     VisitorPass[]
+
+  @@index([hostId])
+  @@index([status])
+  @@index([scheduledDate])
+  @@index([email])
+  @@index([phone])
+  @@index([approvedById])
+  @@index([createdAt])
+  @@map("visitors")
+}
+
+model VisitorLog {
+  id            String           @id @default(cuid())
+  visitorId     String           @map("visitor_id")
+  action        VisitorLogAction
+  performedById String?          @map("performed_by_id")
+  metadata      Json?
+  createdAt     DateTime         @default(now()) @map("created_at")
+
+  visitor     Visitor @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  performedBy User?   @relation("VisitorLogPerformer", fields: [performedById], references: [id])
+
+  @@index([visitorId])
+  @@index([performedById])
+  @@index([action])
+  @@index([createdAt])
+  @@map("visitor_logs")
+}
+
+model VisitorPass {
+  id         String            @id @default(cuid())
+  passNumber String            @unique @map("pass_number")
+  visitorId  String            @map("visitor_id")
+  issuedAt   DateTime          @default(now()) @map("issued_at")
+  returnedAt DateTime?         @map("returned_at")
+  status     VisitorPassStatus @default(ISSUED)
+  createdAt  DateTime          @default(now()) @map("created_at")
+  updatedAt  DateTime          @updatedAt @map("updated_at")
+
+  visitor Visitor @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+
+  @@index([visitorId])
+  @@index([status])
+  @@index([issuedAt])
+  @@map("visitor_passes")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Meeting rooms & bookings
+// ─────────────────────────────────────────────────────────────────────────────
+
+model MeetingRoom {
+  id          String            @id @default(cuid())
+  name        String
+  capacity    Int
+  status      MeetingRoomStatus @default(AVAILABLE)
+  location    String
+  floor       String?
+  building    String?
+  description String?
+  deletedAt   DateTime?         @map("deleted_at")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  equipment RoomEquipment[]
+  bookings  RoomBooking[]
+
+  @@unique([name, location])
+  @@index([status])
+  @@index([location])
+  @@index([deletedAt])
+  @@map("meeting_rooms")
+}
+
+model RoomEquipment {
+  id        String              @id @default(cuid())
+  roomId    String              @map("room_id")
+  name      String
+  quantity  Int                 @default(1)
+  status    RoomEquipmentStatus @default(AVAILABLE)
+  createdAt DateTime            @default(now()) @map("created_at")
+  updatedAt DateTime            @updatedAt @map("updated_at")
+
+  room             MeetingRoom        @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  bookingEquipment BookingEquipment[]
+
+  @@index([roomId])
+  @@index([status])
+  @@map("room_equipment")
+}
+
+model RoomBooking {
+  id              String        @id @default(cuid())
+  title           String
+  organizerId     String        @map("organizer_id")
+  roomId          String        @map("room_id")
+  date            DateTime      @db.Date
+  startTime       String        @map("start_time")
+  endTime         String        @map("end_time")
+  attendees       Int           @default(1)
+  attendeeEmails  String[]      @default([]) @map("attendee_emails")
+  status          BookingStatus @default(PENDING)
+  approvedById    String?       @map("approved_by_id")
+  approvedAt      DateTime?     @map("approved_at")
+  rejectionReason String?       @map("rejection_reason")
+  remarks         String?
+  deletedAt       DateTime?     @map("deleted_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  organizer         User               @relation("BookingOrganizer", fields: [organizerId], references: [id])
+  room              MeetingRoom        @relation(fields: [roomId], references: [id])
+  approvedBy        User?              @relation("BookingApprover", fields: [approvedById], references: [id])
+  recurringPattern  RecurringBooking?
+  equipmentRequests BookingEquipment[]
+
+  @@index([organizerId])
+  @@index([roomId])
+  @@index([date])
+  @@index([status])
+  @@index([approvedById])
+  @@index([deletedAt])
+  @@index([roomId, date, startTime])
+  @@map("room_bookings")
+}
+
+model RecurringBooking {
+  id          String             @id @default(cuid())
+  bookingId   String             @unique @map("booking_id")
+  frequency   RecurringFrequency
+  interval    Int                @default(1)
+  daysOfWeek  Int[]              @default([]) @map("days_of_week")
+  endDate     DateTime?          @map("end_date") @db.Date
+  occurrences Int?
+  isActive    Boolean            @default(true) @map("is_active")
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @updatedAt @map("updated_at")
+
+  booking RoomBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId])
+  @@index([frequency])
+  @@index([isActive])
+  @@map("recurring_bookings")
+}
+
+model BookingEquipment {
+  bookingId   String @map("booking_id")
+  equipmentId String @map("equipment_id")
+  quantity    Int    @default(1)
+
+  booking   RoomBooking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  equipment RoomEquipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  @@id([bookingId, equipmentId])
+  @@index([bookingId])
+  @@index([equipmentId])
+  @@map("booking_equipment")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Inventory & stationery
+// ─────────────────────────────────────────────────────────────────────────────
+
+model InventoryCategory {
+  id          String                @id @default(cuid())
+  name        String                @unique
+  description String?
+  type        InventoryCategoryType
+  createdAt   DateTime              @default(now()) @map("created_at")
+  updatedAt   DateTime              @updatedAt @map("updated_at")
+
+  items InventoryItem[]
+
+  @@index([type])
+  @@map("inventory_categories")
+}
+
+model InventoryItem {
+  id            String              @id @default(cuid())
+  sku           String              @unique
+  name          String
+  description   String?
+  categoryId    String              @map("category_id")
+  vendorId      String?             @map("vendor_id")
+  unit          String
+  currentStock  Int                 @default(0) @map("current_stock")
+  minStockLevel Int                 @default(0) @map("min_stock_level")
+  maxStockLevel Int?                @map("max_stock_level")
+  reorderLevel  Int                 @default(0) @map("reorder_level")
+  unitPrice     Decimal             @default(0) @map("unit_price") @db.Decimal(12, 2)
+  location      String?
+  status        InventoryItemStatus @default(ACTIVE)
+  isActive      Boolean             @default(true) @map("is_active")
+  deletedAt     DateTime?           @map("deleted_at")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @updatedAt @map("updated_at")
+
+  category       InventoryCategory @relation(fields: [categoryId], references: [id])
+  vendor         Vendor?           @relation(fields: [vendorId], references: [id])
+  stockMovements StockMovement[]
+
+  @@index([categoryId])
+  @@index([vendorId])
+  @@index([status])
+  @@index([name])
+  @@index([deletedAt])
+  @@index([currentStock])
+  @@map("inventory_items")
+}
+
+model StockMovement {
+  id            String            @id @default(cuid())
+  itemId        String            @map("item_id")
+  type          StockMovementType
+  quantity      Int
+  reason        String?
+  performedById String            @map("performed_by_id")
+  reference     String?
+  createdAt     DateTime          @default(now()) @map("created_at")
+
+  item        InventoryItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  performedBy User          @relation(fields: [performedById], references: [id])
+
+  @@index([itemId])
+  @@index([performedById])
+  @@index([type])
+  @@index([createdAt])
+  @@map("stock_movements")
+}
+
+model StationeryItem {
+  id            String               @id @default(cuid())
+  sku           String               @unique
+  name          String
+  description   String?
+  unit          String
+  currentStock  Int                  @default(0) @map("current_stock")
+  minStockLevel Int                  @default(0) @map("min_stock_level")
+  reorderLevel  Int                  @default(0) @map("reorder_level")
+  unitPrice     Decimal              @default(0) @map("unit_price") @db.Decimal(12, 2)
+  location      String?
+  status        StationeryItemStatus @default(ACTIVE)
+  isActive      Boolean              @default(true) @map("is_active")
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt @map("updated_at")
+
+  issuances StationeryIssuance[]
+
+  @@index([status])
+  @@index([name])
+  @@index([currentStock])
+  @@map("stationery_items")
+}
+
+model StationeryIssuance {
+  id         String   @id @default(cuid())
+  itemId     String   @map("item_id")
+  employeeId String   @map("employee_id")
+  quantity   Int
+  issuedById String   @map("issued_by_id")
+  purpose    String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  item     StationeryItem @relation(fields: [itemId], references: [id])
+  employee User           @relation("StationeryIssuanceEmployee", fields: [employeeId], references: [id])
+  issuedBy User           @relation("StationeryIssuanceIssuer", fields: [issuedById], references: [id])
+
+  @@index([itemId])
+  @@index([employeeId])
+  @@index([issuedById])
+  @@index([createdAt])
+  @@map("stationery_issuance")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Document inventory & reprints
+// ─────────────────────────────────────────────────────────────────────────────
+
+model DocumentInventory {
+  id              String       @id @default(cuid())
+  documentType    DocumentType @map("document_type")
+  title           String
+  description     String?
+  quantity        Int          @default(0)
+  minQuantity     Int          @default(0) @map("min_quantity")
+  location        String?
+  shelfNumber     String?      @map("shelf_number")
+  lastReprintDate DateTime?    @map("last_reprint_date")
+  isActive        Boolean      @default(true) @map("is_active")
+  deletedAt       DateTime?    @map("deleted_at")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  reprintRequests ReprintRequest[]
+
+  @@index([documentType])
+  @@index([title])
+  @@index([deletedAt])
+  @@map("document_inventory")
+}
+
+model ReprintRequest {
+  id            String               @id @default(cuid())
+  documentId    String               @map("document_id")
+  quantity      Int
+  status        ReprintRequestStatus @default(PENDING)
+  requestedById String               @map("requested_by_id")
+  approvedById  String?              @map("approved_by_id")
+  approvedAt    DateTime?            @map("approved_at")
+  remarks       String?
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt @map("updated_at")
+
+  document    DocumentInventory @relation(fields: [documentId], references: [id])
+  requestedBy User              @relation("ReprintRequester", fields: [requestedById], references: [id])
+  approvedBy  User?             @relation("ReprintApprover", fields: [approvedById], references: [id])
+
+  @@index([documentId])
+  @@index([requestedById])
+  @@index([approvedById])
+  @@index([status])
+  @@index([createdAt])
+  @@map("reprint_requests")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Vendors & procurement
+// ─────────────────────────────────────────────────────────────────────────────
+
+model VendorCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  vendors Vendor[]
+
+  @@map("vendor_categories")
+}
+
+model Vendor {
+  id            String       @id @default(cuid())
+  code          String       @unique
+  name          String
+  categoryId    String       @map("category_id")
+  contactPerson String?      @map("contact_person")
+  email         String?
+  phone         String?
+  address       String?
+  city          String?
+  state         String?
+  postalCode    String?      @map("postal_code")
+  country       String?      @default("IN")
+  taxId         String?      @map("tax_id")
+  paymentTerms  String?      @map("payment_terms")
+  bankName      String?      @map("bank_name")
+  accountNumber String?      @map("account_number")
+  ifscCode      String?      @map("ifsc_code")
+  rating        Decimal?     @db.Decimal(3, 2)
+  status        VendorStatus @default(ACTIVE)
+  notes         String?
+  deletedAt     DateTime?    @map("deleted_at")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  category         VendorCategory    @relation(fields: [categoryId], references: [id])
+  inventoryItems   InventoryItem[]
+  purchaseRequests PurchaseRequest[]
+  officeExpenses   OfficeExpense[]
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([name])
+  @@index([deletedAt])
+  @@map("vendors")
+}
+
+model PurchaseRequest {
+  id            String                @id @default(cuid())
+  requestNumber String                @unique @map("request_number")
+  requestedById String                @map("requested_by_id")
+  vendorId      String?               @map("vendor_id")
+  status        PurchaseRequestStatus @default(DRAFT)
+  totalAmount   Decimal               @default(0) @map("total_amount") @db.Decimal(14, 2)
+  budgetCode    String?               @map("budget_code")
+  remarks       String?
+  deletedAt     DateTime?             @map("deleted_at")
+  createdAt     DateTime              @default(now()) @map("created_at")
+  updatedAt     DateTime              @updatedAt @map("updated_at")
+
+  requestedBy User                  @relation(fields: [requestedById], references: [id])
+  vendor      Vendor?               @relation(fields: [vendorId], references: [id])
+  items       PurchaseRequestItem[]
+
+  @@index([requestedById])
+  @@index([vendorId])
+  @@index([status])
+  @@index([requestNumber])
+  @@index([deletedAt])
+  @@index([createdAt])
+  @@map("purchase_requests")
+}
+
+model PurchaseRequestItem {
+  id                String   @id @default(cuid())
+  purchaseRequestId String   @map("purchase_request_id")
+  itemName          String   @map("item_name")
+  quantity          Int
+  unitPrice         Decimal  @map("unit_price") @db.Decimal(12, 2)
+  description       String?
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  purchaseRequest PurchaseRequest @relation(fields: [purchaseRequestId], references: [id], onDelete: Cascade)
+
+  @@index([purchaseRequestId])
+  @@map("purchase_request_items")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Approvals, notifications, logging
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Approval {
+  id         String             @id @default(cuid())
+  entityType ApprovalEntityType @map("entity_type")
+  entityId   String             @map("entity_id")
+  approverId String             @map("approver_id")
+  status     ApprovalStatus     @default(PENDING)
+  comments   String?
+  level      Int                @default(1)
+  createdAt  DateTime           @default(now()) @map("created_at")
+  updatedAt  DateTime           @updatedAt @map("updated_at")
+
+  approver User @relation("ApprovalApprover", fields: [approverId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([approverId])
+  @@index([status])
+  @@index([level])
+  @@map("approvals")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String           @map("user_id")
+  type      NotificationType @default(INFO)
+  title     String
+  message   String
+  isRead    Boolean          @default(false) @map("is_read")
+  metadata  Json?
+  link      String?
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([type])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String?  @map("user_id")
+  action     String
+  module     String
+  entityType String?  @map("entity_type")
+  entityId   String?  @map("entity_id")
+  metadata   Json?
+  ipAddress  String?  @map("ip_address")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([module])
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("activity_logs")
+}
+
+model OfficeExpense {
+  id           String                @id @default(cuid())
+  category     OfficeExpenseCategory
+  amount       Decimal               @db.Decimal(14, 2)
+  description  String
+  expenseDate  DateTime              @map("expense_date") @db.Date
+  recordedById String                @map("recorded_by_id")
+  vendorId     String?               @map("vendor_id")
+  receiptUrl   String?               @map("receipt_url")
+  createdAt    DateTime              @default(now()) @map("created_at")
+  updatedAt    DateTime              @updatedAt @map("updated_at")
+
+  recordedBy User    @relation(fields: [recordedById], references: [id])
+  vendor     Vendor? @relation(fields: [vendorId], references: [id])
+
+  @@index([recordedById])
+  @@index([vendorId])
+  @@index([category])
+  @@index([expenseDate])
+  @@index([createdAt])
+  @@map("office_expenses")
+}
+
+model Report {
+  id            String       @id @default(cuid())
+  name          String
+  type          ReportType
+  generatedById String       @map("generated_by_id")
+  parameters    Json?
+  fileUrl       String?      @map("file_url")
+  status        ReportStatus @default(PENDING)
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  generatedBy User @relation(fields: [generatedById], references: [id])
+
+  @@index([generatedById])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@map("reports")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?  @map("user_id")
+  action    String
+  tableName String   @map("table_name")
+  recordId  String   @map("record_id")
+  oldValues Json?    @map("old_values")
+  newValues Json?    @map("new_values")
+  ipAddress String?  @map("ip_address")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([tableName])
+  @@index([recordId])
+  @@index([tableName, recordId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
