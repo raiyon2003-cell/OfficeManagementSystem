@@ -27,9 +27,69 @@ function resolveStationeryStatus(
   return StationeryItemStatus.ACTIVE;
 }
 
+async function ensureDefaultStationeryItems() {
+  const existingCount = await prisma.stationeryItem.count({
+    where: { isActive: true },
+  });
+
+  if (existingCount > 0) return;
+
+  await prisma.stationeryItem.createMany({
+    data: [
+      {
+        sku: "STAT-PEN-001",
+        name: "Ballpoint Pen",
+        unit: "pcs",
+        currentStock: 100,
+        minStockLevel: 20,
+        reorderLevel: 30,
+        unitPrice: 10,
+        location: "Stationery Store A1",
+        status: StationeryItemStatus.ACTIVE,
+      },
+      {
+        sku: "STAT-NBK-001",
+        name: "Notebook A5",
+        unit: "pcs",
+        currentStock: 60,
+        minStockLevel: 15,
+        reorderLevel: 20,
+        unitPrice: 65,
+        location: "Stationery Store B1",
+        status: StationeryItemStatus.ACTIVE,
+      },
+      {
+        sku: "STAT-MRK-001",
+        name: "Whiteboard Marker",
+        unit: "pcs",
+        currentStock: 40,
+        minStockLevel: 10,
+        reorderLevel: 15,
+        unitPrice: 35,
+        location: "Stationery Store C2",
+        status: StationeryItemStatus.ACTIVE,
+      },
+      {
+        sku: "STAT-PPR-001",
+        name: "A4 Printing Paper",
+        unit: "ream",
+        currentStock: 25,
+        minStockLevel: 8,
+        reorderLevel: 10,
+        unitPrice: 380,
+        location: "Stationery Store D1",
+        status: StationeryItemStatus.ACTIVE,
+      },
+    ],
+    skipDuplicates: true,
+  });
+}
+
 export const GET = withPermission(
   PERMISSIONS.STATIONERY_READ,
   async (request) => {
+    await ensureDefaultStationeryItems();
+
     const parsed = parseSearchParams(request, listStationeryItemsSchema);
     if (!parsed.success) return parsed.response;
 

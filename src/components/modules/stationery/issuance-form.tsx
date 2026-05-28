@@ -35,7 +35,7 @@ export type IssuanceFormValues = z.infer<typeof issuanceSchema>;
 
 interface IssuanceFormProps {
   items: StationeryItem[];
-  onSubmit: (data: IssuanceFormValues) => Promise<void>;
+  onSubmit: (data: IssuanceFormValues) => void | Promise<void>;
   isSubmitting?: boolean;
 }
 
@@ -61,11 +61,17 @@ export function IssuanceForm({ items, onSubmit, isSubmitting }: IssuanceFormProp
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {items.map((item) => (
-                    <SelectItem key={item.id} value={item.id}>
-                      {item.name} — {item.currentStock} available
-                    </SelectItem>
-                  ))}
+                  {items.length > 0 ? (
+                    items.map((item) => (
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.name} — {item.currentStock} available
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                      No stationery items available
+                    </div>
+                  )}
                 </SelectContent>
               </Select>
               <FormMessage />

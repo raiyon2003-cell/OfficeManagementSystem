@@ -5,7 +5,7 @@ import { buildQueryParams, unwrapPaginated } from "@/lib/api/client-helpers";
 
 export async function getStationeryItems(params?: ListParams) {
   const response = await apiClient.get<PaginatedResponse<StationeryItem>>(
-    "/stationery",
+    "/stationery/items",
     { params: buildQueryParams(params) },
   );
   return unwrapPaginated(response);
@@ -18,7 +18,7 @@ export async function issueStationery(input: {
   purpose?: string;
 }) {
   const response = await apiClient.post<ApiSuccessResponse<StationeryIssuance>>(
-    "/stationery/issue",
+    "/stationery/issuance",
     input,
   );
   return unwrapData(response);
@@ -26,7 +26,7 @@ export async function issueStationery(input: {
 
 export async function getIssuances(params?: ListParams) {
   const response = await apiClient.get<PaginatedResponse<StationeryIssuance>>(
-    "/stationery/issuances",
+    "/stationery/issuance",
     { params: buildQueryParams(params) },
   );
   return unwrapPaginated(response);
