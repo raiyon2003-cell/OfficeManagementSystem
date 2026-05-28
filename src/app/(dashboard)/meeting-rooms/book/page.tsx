@@ -47,8 +47,8 @@ export default function BookMeetingRoomPage() {
             <BookingForm
               rooms={rooms?.data ?? []}
               defaultRoomId={defaultRoomId}
-              onSubmit={async (data: BookingInput) => {
-                await mutation.mutateAsync(data);
+              onSubmit={(data: BookingInput) => {
+                mutation.mutate(data);
               }}
               isSubmitting={mutation.isPending}
             />

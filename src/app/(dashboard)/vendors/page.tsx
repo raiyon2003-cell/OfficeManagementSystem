@@ -125,8 +125,8 @@ export default function VendorsPage() {
           </DialogHeader>
           <VendorForm
             defaultValues={editing ?? undefined}
-            onSubmit={async (input) => {
-              await saveMutation.mutateAsync(input);
+            onSubmit={(input) => {
+              saveMutation.mutate(input);
             }}
             isSubmitting={saveMutation.isPending}
             submitLabel={editing ? "Update Vendor" : "Create Vendor"}

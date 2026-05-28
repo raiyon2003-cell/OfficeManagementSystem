@@ -15,9 +15,57 @@ import {
 } from "@/lib/validations/bookings";
 import { logActivity, logAudit } from "@/lib/services/audit.service";
 
+async function ensureDefaultMeetingRooms() {
+  const existingRooms = await prisma.meetingRoom.count({
+    where: { deletedAt: null },
+  });
+
+  if (existingRooms > 0) return;
+
+  await prisma.meetingRoom.createMany({
+    data: [
+      {
+        name: "Conference Room A",
+        capacity: 8,
+        location: "First Floor",
+        floor: "1",
+        building: "Main Office",
+        description: "General meetings and team syncs",
+      },
+      {
+        name: "Conference Room B",
+        capacity: 12,
+        location: "First Floor",
+        floor: "1",
+        building: "Main Office",
+        description: "Client calls and presentations",
+      },
+      {
+        name: "Board Room",
+        capacity: 16,
+        location: "Second Floor",
+        floor: "2",
+        building: "Main Office",
+        description: "Leadership and board meetings",
+      },
+      {
+        name: "Huddle Room",
+        capacity: 4,
+        location: "Ground Floor",
+        floor: "G",
+        building: "Main Office",
+        description: "Quick standups and pair sessions",
+      },
+    ],
+    skipDuplicates: true,
+  });
+}
+
 export const GET = withPermission(
   PERMISSIONS.MEETING_ROOMS_READ,
   async (request) => {
+    await ensureDefaultMeetingRooms();
+
     const parsed = parseSearchParams(request, listMeetingRoomsSchema);
     if (!parsed.success) return parsed.response;
 

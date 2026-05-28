@@ -15,6 +15,10 @@ import {
 } from "@/lib/validations/vendors";
 import { logActivity, logAudit } from "@/lib/services/audit.service";
 
+function generateVendorCode() {
+  return `VND-${Date.now().toString(36).toUpperCase()}`;
+}
+
 export const GET = withPermission(PERMISSIONS.VENDORS_READ, async (request) => {
   const parsed = parseSearchParams(request, listVendorsSchema);
   if (!parsed.success) return parsed.response;
@@ -62,15 +66,28 @@ export const POST = withPermission(
     if (!parsed.success) return parsed.response;
 
     const ip = getClientIp(request);
-    const existing = await prisma.vendor.findUnique({
-      where: { code: parsed.data.code },
-    });
-    if (existing) {
-      return error("Vendor code already exists", { code: "CODE_EXISTS", status: 409 });
+
+    let defaultCategory = parsed.data.categoryId
+      ? null
+      : await prisma.vendorCategory.findFirst({ orderBy: { name: "asc" } });
+
+    if (!parsed.data.categoryId && !defaultCategory) {
+      defaultCategory = await prisma.vendorCategory.create({
+        data: { name: "General", description: "Auto-created default category" },
+      });
+    }
+
+    let code = parsed.data.code ?? generateVendorCode();
+    while (await prisma.vendor.findUnique({ where: { code } })) {
+      code = generateVendorCode();
     }
 
     const vendor = await prisma.vendor.create({
-      data: parsed.data,
+      data: {
+        ...parsed.data,
+        code,
+        categoryId: parsed.data.categoryId ?? defaultCategory!.id,
+      },
       include: { category: true },
     });
 

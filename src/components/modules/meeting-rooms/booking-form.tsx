@@ -41,7 +41,7 @@ type BookingFormValues = z.infer<typeof bookingSchema>;
 interface BookingFormProps {
   rooms: MeetingRoom[];
   defaultRoomId?: string;
-  onSubmit: (data: BookingInput) => Promise<void>;
+  onSubmit: (data: BookingInput) => void | Promise<void>;
   isSubmitting?: boolean;
 }
 
@@ -99,11 +99,17 @@ export function BookingForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {rooms.map((room) => (
-                    <SelectItem key={room.id} value={room.id}>
-                      {room.name} — {room.location} (cap. {room.capacity})
-                    </SelectItem>
-                  ))}
+                  {rooms.length > 0 ? (
+                    rooms.map((room) => (
+                      <SelectItem key={room.id} value={room.id}>
+                        {room.name} — {room.location} (cap. {room.capacity})
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                      No rooms available
+                    </div>
+                  )}
                 </SelectContent>
               </Select>
               <FormMessage />

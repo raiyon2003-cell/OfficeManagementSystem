@@ -116,8 +116,8 @@ export default function DocumentsPage() {
               </CardHeader>
               <CardContent>
                 <DocumentForm
-                  onSubmit={async (data) => {
-                    await createDocMutation.mutateAsync(data);
+                  onSubmit={(data) => {
+                    createDocMutation.mutate(data);
                   }}
                   isSubmitting={createDocMutation.isPending}
                 />
@@ -144,8 +144,8 @@ export default function DocumentsPage() {
               <CardContent>
                 <ReprintForm
                   documents={documents?.data ?? []}
-                  onSubmit={async (data) => {
-                    await reprintMutation.mutateAsync(data);
+                  onSubmit={(data) => {
+                    reprintMutation.mutate(data);
                   }}
                   isSubmitting={reprintMutation.isPending}
                 />

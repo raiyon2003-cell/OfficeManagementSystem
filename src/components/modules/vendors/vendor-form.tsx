@@ -31,7 +31,7 @@ type VendorFormValues = z.infer<typeof vendorSchema>;
 
 interface VendorFormProps {
   defaultValues?: Partial<Vendor>;
-  onSubmit: (data: VendorInput) => Promise<void>;
+  onSubmit: (data: VendorInput) => void | Promise<void>;
   isSubmitting?: boolean;
   submitLabel?: string;
 }

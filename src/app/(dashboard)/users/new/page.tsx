@@ -33,8 +33,8 @@ export default function NewUserPage() {
       <Card className="max-w-md">
         <CardContent className="pt-6">
           <UserForm
-            onSubmit={async (data: CreateUserInput) => {
-              await mutation.mutateAsync(data);
+            onSubmit={(data: CreateUserInput) => {
+              mutation.mutate(data);
             }}
             isSubmitting={mutation.isPending}
           />

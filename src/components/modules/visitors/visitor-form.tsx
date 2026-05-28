@@ -36,7 +36,7 @@ type VisitorFormValues = z.infer<typeof visitorFormSchema>;
 
 interface VisitorFormProps {
   defaultValues?: Partial<Visitor>;
-  onSubmit: (data: VisitorInput) => Promise<void>;
+  onSubmit: (data: VisitorInput) => void | Promise<void>;
   isSubmitting?: boolean;
   submitLabel?: string;
 }

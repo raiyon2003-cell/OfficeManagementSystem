@@ -60,8 +60,8 @@ export default function StationeryPage() {
           <CardContent>
             <IssuanceForm
               items={data?.data ?? []}
-              onSubmit={async (values: IssuanceFormValues) => {
-                await issuanceMutation.mutateAsync(values);
+              onSubmit={(values: IssuanceFormValues) => {
+                issuanceMutation.mutate(values);
               }}
               isSubmitting={issuanceMutation.isPending}
             />

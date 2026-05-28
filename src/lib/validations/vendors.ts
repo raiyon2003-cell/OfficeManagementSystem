@@ -8,9 +8,9 @@ export const createVendorCategorySchema = z.object({
 });
 
 export const createVendorSchema = z.object({
-  code: z.string().trim().min(1).max(50),
+  code: z.string().trim().min(1).max(50).optional(),
   name: z.string().trim().min(1).max(200),
-  categoryId: z.string().min(1),
+  categoryId: z.string().min(1).optional(),
   contactPerson: z.string().trim().optional().nullable(),
   email: z.email().optional().nullable(),
   phone: z.string().trim().optional().nullable(),

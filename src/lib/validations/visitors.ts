@@ -14,7 +14,7 @@ export const createVisitorSchema = z.object({
   photoUrl: z.string().url().optional().nullable(),
   scheduledDate: z.coerce.date({ error: "Invalid scheduled date" }),
   scheduledTime: z.string().trim().optional().nullable(),
-  hostId: z.string().min(1, "Host is required"),
+  hostId: z.string().min(1, "Host is required").optional(),
   notes: z.string().trim().optional().nullable(),
   isWalkIn: z.boolean().optional().default(false),
 });

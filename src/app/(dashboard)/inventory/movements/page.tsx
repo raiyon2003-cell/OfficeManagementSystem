@@ -48,8 +48,8 @@ export default function StockMovementPage() {
           ) : (
             <StockMovementForm
               items={items?.data ?? []}
-              onSubmit={async (data: StockMovementFormValues) => {
-                await mutation.mutateAsync(data);
+              onSubmit={(data: StockMovementFormValues) => {
+                mutation.mutate(data);
               }}
               isSubmitting={mutation.isPending}
             />

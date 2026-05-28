@@ -33,8 +33,8 @@ export default function NewVisitorPage() {
       <Card className="max-w-2xl">
         <CardContent className="pt-6">
           <VisitorForm
-            onSubmit={async (data: VisitorInput) => {
-              await mutation.mutateAsync(data);
+            onSubmit={(data: VisitorInput) => {
+              mutation.mutate(data);
             }}
             isSubmitting={mutation.isPending}
           />

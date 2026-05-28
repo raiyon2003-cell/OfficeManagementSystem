@@ -40,8 +40,8 @@ export default function NewPurchaseRequestPage() {
         <CardContent className="pt-6">
           <RequestForm
             vendors={vendors?.data ?? []}
-            onSubmit={async (data: PurchaseRequestInput) => {
-              await mutation.mutateAsync(data);
+            onSubmit={(data: PurchaseRequestInput) => {
+              mutation.mutate(data);
             }}
             isSubmitting={mutation.isPending}
           />

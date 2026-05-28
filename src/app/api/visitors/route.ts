@@ -77,9 +77,10 @@ export const POST = withPermission(
 
     const ip = getClientIp(request);
     const { isWalkIn, ...data } = parsed.data;
+    const hostId = data.hostId ?? user.id;
 
     const host = await prisma.user.findFirst({
-      where: { id: data.hostId, isActive: true, deletedAt: null },
+      where: { id: hostId, isActive: true, deletedAt: null },
     });
     if (!host) {
       return error("Host not found", { code: "HOST_NOT_FOUND", status: 400 });
@@ -90,6 +91,7 @@ export const POST = withPermission(
     const visitor = await prisma.visitor.create({
       data: {
         ...data,
+        hostId,
         status,
         checkInAt: isWalkIn ? new Date() : undefined,
       },
@@ -107,7 +109,7 @@ export const POST = withPermission(
     });
 
     await createNotification({
-      userId: data.hostId,
+      userId: hostId,
       title: "New visitor registration",
       message: `${visitor.fullName} has been registered as a visitor`,
       type: "INFO",

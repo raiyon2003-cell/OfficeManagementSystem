@@ -152,12 +152,40 @@ export class ApiClientError extends Error {
   }
 }
 
+function extractValidationMessage(details: unknown): string | null {
+  if (!details || typeof details !== "object" || !("fieldErrors" in details)) {
+    return null;
+  }
+
+  const fieldErrors = (details as { fieldErrors?: unknown }).fieldErrors;
+  if (!fieldErrors || typeof fieldErrors !== "object") {
+    return null;
+  }
+
+  for (const messages of Object.values(fieldErrors as Record<string, unknown>)) {
+    if (Array.isArray(messages)) {
+      const first = messages.find(
+        (message): message is string =>
+          typeof message === "string" && message.trim().length > 0,
+      );
+      if (first) return first;
+    }
+  }
+
+  return null;
+}
+
 function normalizeApiError(error: AxiosError<ApiErrorResponse>): ApiClientError {
   const apiError = error.response?.data?.error;
 
   if (apiError) {
+    const validationMessage =
+      apiError.code === "VALIDATION_ERROR"
+        ? extractValidationMessage(apiError.details)
+        : null;
+
     return new ApiClientError(
-      apiError.message,
+      validationMessage ?? apiError.message,
       apiError.code,
       error.response?.status,
       apiError.details,
