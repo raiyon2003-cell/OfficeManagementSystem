@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 
 interface UserFormProps {
-  onSubmit: (data: CreateUserInput) => Promise<void>;
+  onSubmit: (data: CreateUserInput) => void | Promise<void>;
   isSubmitting?: boolean;
 }
 

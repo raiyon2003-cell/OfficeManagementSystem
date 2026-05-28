@@ -37,7 +37,7 @@ export type StockMovementFormValues = z.infer<typeof movementSchema>;
 interface StockMovementFormProps {
   items: InventoryItem[];
   defaultItemId?: string;
-  onSubmit: (data: StockMovementFormValues) => Promise<void>;
+  onSubmit: (data: StockMovementFormValues) => void | Promise<void>;
   isSubmitting?: boolean;
 }
 
