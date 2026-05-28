@@ -85,13 +85,31 @@ export async function createDocument(input: {
 
 export async function updateDocument(
   id: string,
-  input: Partial<DocumentInventory>,
+  input: Partial<{
+    name: string;
+    type: string;
+    currentStock: number;
+    minStockLevel: number;
+    location?: string;
+  }>,
 ) {
-  const response = await apiClient.patch<ApiSuccessResponse<DocumentInventory>>(
+  const response = await apiClient.patch<ApiSuccessResponse<DocumentApiRecord>>(
     `/documents/${id}`,
-    input,
+    {
+      ...(input.name !== undefined ? { title: input.name } : {}),
+      ...(input.type !== undefined ? { documentType: input.type } : {}),
+      ...(input.currentStock !== undefined ? { quantity: input.currentStock } : {}),
+      ...(input.minStockLevel !== undefined
+        ? { minQuantity: input.minStockLevel }
+        : {}),
+      ...(input.location !== undefined ? { location: input.location } : {}),
+    },
   );
-  return unwrapData(response);
+  return toDocumentInventory(unwrapData(response));
+}
+
+export async function deleteDocument(id: string) {
+  await apiClient.delete(`/documents/${id}`);
 }
 
 export async function getReprintRequests(params?: ListParams) {

@@ -2,20 +2,31 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/shared/page-header";
 import { PageTransition } from "@/components/shared/page-transition";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { DocumentForm } from "@/components/modules/documents/document-form";
 import { ReprintForm } from "@/components/modules/documents/reprint-form";
 import { DataTable, type DataTableColumn } from "@/components/shared/data-table";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   getDocuments,
   getReprintRequests,
   createDocument,
+  updateDocument,
+  deleteDocument,
   createReprintRequest,
 } from "@/lib/api/documents";
 import type { DocumentInventory, ReprintRequest } from "@/types/entities";
@@ -24,6 +35,12 @@ import { PAGINATION_DEFAULTS } from "@/lib/constants";
 export default function DocumentsPage() {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const [editingDocument, setEditingDocument] = useState<DocumentInventory | null>(
+    null,
+  );
+  const [deletingDocument, setDeletingDocument] = useState<DocumentInventory | null>(
+    null,
+  );
 
   const { data: documents, isLoading } = useQuery({
     queryKey: ["documents", page],
@@ -44,6 +61,29 @@ export default function DocumentsPage() {
     },
     { id: "currentStock", header: "Stock", accessorKey: "currentStock" },
     { id: "location", header: "Location", cell: (row) => row.location ?? "—" },
+    {
+      id: "actions",
+      header: "",
+      cell: (row) => (
+        <div className="flex gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setEditingDocument(row)}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-destructive"
+            onClick={() => setDeletingDocument(row)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   const reprintColumns: DataTableColumn<ReprintRequest>[] = [
@@ -79,6 +119,30 @@ export default function DocumentsPage() {
     },
     onError: (err) =>
       toast.error(err instanceof Error ? err.message : "Request failed"),
+  });
+
+  const updateDocMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof updateDocument>[1] }) =>
+      updateDocument(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
+      toast.success("Document updated");
+      setEditingDocument(null);
+    },
+    onError: (err) =>
+      toast.error(err instanceof Error ? err.message : "Failed to update document"),
+  });
+
+  const deleteDocMutation = useMutation({
+    mutationFn: deleteDocument,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
+      queryClient.invalidateQueries({ queryKey: ["documents", "reprints"] });
+      toast.success("Document deleted");
+      setDeletingDocument(null);
+    },
+    onError: (err) =>
+      toast.error(err instanceof Error ? err.message : "Failed to delete document"),
   });
 
   return (
@@ -120,6 +184,7 @@ export default function DocumentsPage() {
                     createDocMutation.mutate(data);
                   }}
                   isSubmitting={createDocMutation.isPending}
+                  submitLabel="Add Document"
                 />
               </CardContent>
             </Card>
@@ -154,6 +219,47 @@ export default function DocumentsPage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={!!editingDocument} onOpenChange={(open) => !open && setEditingDocument(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Document</DialogTitle>
+          </DialogHeader>
+          <DocumentForm
+            defaultValues={
+              editingDocument
+                ? {
+                    name: editingDocument.name,
+                    type: editingDocument.type,
+                    currentStock: editingDocument.currentStock,
+                    minStockLevel: editingDocument.minStockLevel,
+                    location: editingDocument.location ?? "",
+                  }
+                : undefined
+            }
+            onSubmit={(data) => {
+              if (!editingDocument) return;
+              updateDocMutation.mutate({ id: editingDocument.id, data });
+            }}
+            isSubmitting={updateDocMutation.isPending}
+            submitLabel="Update Document"
+          />
+        </DialogContent>
+      </Dialog>
+
+      <ConfirmDialog
+        open={!!deletingDocument}
+        onOpenChange={(open) => !open && setDeletingDocument(null)}
+        title="Delete document"
+        description={`Are you sure you want to delete ${deletingDocument?.name}?`}
+        confirmLabel="Delete"
+        variant="destructive"
+        onConfirm={() => {
+          if (!deletingDocument) return;
+          deleteDocMutation.mutate(deletingDocument.id);
+        }}
+        isLoading={deleteDocMutation.isPending}
+      />
     </PageTransition>
   );
 }

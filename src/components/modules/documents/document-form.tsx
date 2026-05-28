@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -43,20 +44,37 @@ const documentTypes = [
 
 interface DocumentFormProps {
   onSubmit: (data: DocumentFormValues) => void | Promise<void>;
+  defaultValues?: Partial<DocumentFormValues>;
   isSubmitting?: boolean;
+  submitLabel?: string;
 }
 
-export function DocumentForm({ onSubmit, isSubmitting }: DocumentFormProps) {
+export function DocumentForm({
+  onSubmit,
+  defaultValues,
+  isSubmitting,
+  submitLabel = "Add Document",
+}: DocumentFormProps) {
   const form = useForm<DocumentFormValues>({
     resolver: zodResolver(documentSchema),
     defaultValues: {
-      name: "",
-      type: "LETTERHEAD",
-      currentStock: 0,
-      minStockLevel: 10,
-      location: "",
+      name: defaultValues?.name ?? "",
+      type: defaultValues?.type ?? "LETTERHEAD",
+      currentStock: defaultValues?.currentStock ?? 0,
+      minStockLevel: defaultValues?.minStockLevel ?? 10,
+      location: defaultValues?.location ?? "",
     },
   });
+
+  useEffect(() => {
+    form.reset({
+      name: defaultValues?.name ?? "",
+      type: defaultValues?.type ?? "LETTERHEAD",
+      currentStock: defaultValues?.currentStock ?? 0,
+      minStockLevel: defaultValues?.minStockLevel ?? 10,
+      location: defaultValues?.location ?? "",
+    });
+  }, [defaultValues, form]);
 
   return (
     <Form {...form}>
@@ -140,7 +158,7 @@ export function DocumentForm({ onSubmit, isSubmitting }: DocumentFormProps) {
           )}
         />
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Add Document"}
+          {isSubmitting ? "Saving..." : submitLabel}
         </Button>
       </form>
     </Form>
