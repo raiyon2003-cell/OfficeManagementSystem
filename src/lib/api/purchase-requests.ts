@@ -32,7 +32,16 @@ export async function getPurchaseRequest(id: string) {
 export async function createPurchaseRequest(input: PurchaseRequestInput) {
   const response = await apiClient.post<ApiSuccessResponse<PurchaseRequest>>(
     "/purchase-requests",
-    input,
+    {
+      vendorId: input.vendorId || undefined,
+      remarks: input.description || undefined,
+      items: input.items.map((item) => ({
+        itemName: item.description,
+        description: item.description,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+      })),
+    },
   );
   return unwrapData(response);
 }

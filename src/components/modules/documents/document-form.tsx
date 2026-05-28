@@ -42,7 +42,7 @@ const documentTypes = [
 ];
 
 interface DocumentFormProps {
-  onSubmit: (data: DocumentFormValues) => Promise<void>;
+  onSubmit: (data: DocumentFormValues) => void | Promise<void>;
   isSubmitting?: boolean;
 }
 

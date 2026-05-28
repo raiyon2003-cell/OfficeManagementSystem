@@ -43,7 +43,7 @@ type RequestFormValues = z.infer<typeof requestSchema>;
 
 interface RequestFormProps {
   vendors?: Vendor[];
-  onSubmit: (data: PurchaseRequestInput) => Promise<void>;
+  onSubmit: (data: PurchaseRequestInput) => void | Promise<void>;
   isSubmitting?: boolean;
 }
 

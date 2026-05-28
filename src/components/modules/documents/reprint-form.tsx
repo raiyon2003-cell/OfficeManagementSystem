@@ -34,7 +34,7 @@ export type ReprintFormValues = z.infer<typeof reprintSchema>;
 
 interface ReprintFormProps {
   documents: DocumentInventory[];
-  onSubmit: (data: ReprintFormValues) => Promise<void>;
+  onSubmit: (data: ReprintFormValues) => void | Promise<void>;
   isSubmitting?: boolean;
 }
 
