@@ -3,94 +3,97 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ─── CONTEG Brand Tokens ─────────────────────────────────────────────────── */
+/* ─── CONTEG Brand Tokens (Brand Guidelines PDF) ─────────────────────────── */
 :root {
+  /* Official palette */
   --brand-lime: #588157;
   --brand-olive: #819171;
   --brand-charcoal: #344e41;
   --brand-deep-teal: #073b4c;
   --brand-steel-teal: #28666e;
+  --brand-platinum: #ebeee8;
+  --brand-night-forest: #344e41;
 
-  /* Light mode — clean platinum-style backgrounds */
-  --background: #f8faf8;
-  --foreground: #344e41;
+  /* Light mode — Platinum background, Charcoal Green text */
+  --background: var(--brand-platinum);
+  --foreground: var(--brand-charcoal);
   --card: #ffffff;
-  --card-foreground: #344e41;
+  --card-foreground: var(--brand-charcoal);
   --popover: #ffffff;
-  --popover-foreground: #344e41;
-  --primary: #588157;
+  --popover-foreground: var(--brand-charcoal);
+  --primary: var(--brand-lime);
   --primary-foreground: #ffffff;
-  --secondary: #e8efe6;
-  --secondary-foreground: #344e41;
-  --muted: #eef2ec;
-  --muted-foreground: #819171;
-  --accent: #28666e;
+  --secondary: #e3eae0;
+  --secondary-foreground: var(--brand-charcoal);
+  --muted: #e8ede5;
+  --muted-foreground: var(--brand-olive);
+  --accent: var(--brand-steel-teal);
   --accent-foreground: #ffffff;
-  --destructive: #c53030;
+  --destructive: #b91c1c;
   --destructive-foreground: #ffffff;
-  --success: #588157;
+  --success: var(--brand-lime);
   --success-foreground: #ffffff;
-  --warning: #b8860b;
+  --warning: #a16207;
   --warning-foreground: #ffffff;
-  --border: #d4ddd2;
-  --input: #d4ddd2;
-  --ring: #588157;
+  --border: #cdd8ca;
+  --input: #cdd8ca;
+  --ring: var(--brand-lime);
   --radius: 0.5rem;
 
-  /* Sidebar — charcoal green with lime active state */
-  --sidebar: #344e41;
+  /* Sidebar — Charcoal Green with Lime active state */
+  --sidebar: var(--brand-charcoal);
   --sidebar-foreground: #f4f7f4;
-  --sidebar-border: #28666e;
-  --sidebar-accent: #588157;
+  --sidebar-border: var(--brand-steel-teal);
+  --sidebar-accent: var(--brand-lime);
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-muted: #819171;
+  --sidebar-muted: var(--brand-olive);
 
-  /* Charts — brand palette */
-  --chart-1: #588157;
-  --chart-2: #28666e;
-  --chart-3: #819171;
-  --chart-4: #344e41;
-  --chart-5: #073b4c;
+  /* Charts — brand palette only */
+  --chart-1: var(--brand-lime);
+  --chart-2: var(--brand-steel-teal);
+  --chart-3: var(--brand-olive);
+  --chart-4: var(--brand-charcoal);
+  --chart-5: var(--brand-deep-teal);
 }
 
-/* Dark mode — Night Forest (#073b4c) background */
+/* Dark mode — Night Forest (Charcoal Green) background */
 .dark {
-  --background: #073b4c;
-  --foreground: #f0f5f4;
-  --card: #28666e;
-  --card-foreground: #f0f5f4;
-  --popover: #28666e;
-  --popover-foreground: #f0f5f4;
-  --primary: #588157;
+  --background: var(--brand-night-forest);
+  --foreground: #eef3ef;
+  --card: var(--brand-deep-teal);
+  --card-foreground: #eef3ef;
+  --popover: var(--brand-steel-teal);
+  --popover-foreground: #eef3ef;
+  --primary: var(--brand-lime);
   --primary-foreground: #ffffff;
-  --secondary: #344e41;
-  --secondary-foreground: #f0f5f4;
-  --muted: #344e41;
-  --muted-foreground: #819171;
-  --accent: #588157;
+  --secondary: #2d4538;
+  --secondary-foreground: #eef3ef;
+  --muted: #2d4538;
+  --muted-foreground: var(--brand-olive);
+  --accent: var(--brand-steel-teal);
   --accent-foreground: #ffffff;
-  --destructive: #e53e3e;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --success: #588157;
+  --success: var(--brand-lime);
   --success-foreground: #ffffff;
-  --warning: #d69e2e;
-  --warning-foreground: #073b4c;
-  --border: #28666e;
-  --input: #28666e;
-  --ring: #588157;
+  --warning: #eab308;
+  --warning-foreground: var(--brand-night-forest);
+  --border: var(--brand-steel-teal);
+  --input: var(--brand-steel-teal);
+  --ring: var(--brand-lime);
 
-  --sidebar: #073b4c;
-  --sidebar-foreground: #f0f5f4;
-  --sidebar-border: #28666e;
-  --sidebar-accent: #588157;
+  --sidebar: #2a4035;
+  --sidebar-foreground: #eef3ef;
+  --sidebar-border: var(--brand-steel-teal);
+  --sidebar-accent: var(--brand-lime);
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-muted: #819171;
+  --sidebar-muted: var(--brand-olive);
 
   --chart-1: #7cb87a;
   --chart-2: #4a9aaa;
   --chart-3: #a3b596;
-  --chart-4: #588157;
-  --chart-5: #819171;
+  --chart-4: var(--brand-lime);
+  --chart-5: var(--brand-olive);
 }
 
 @theme inline {
@@ -122,16 +125,19 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
   --color-brand-lime: var(--brand-lime);
   --color-brand-olive: var(--brand-olive);
   --color-brand-charcoal: var(--brand-charcoal);
   --color-brand-deep-teal: var(--brand-deep-teal);
   --color-brand-steel-teal: var(--brand-steel-teal);
+  --color-brand-platinum: var(--brand-platinum);
+  --color-brand-night-forest: var(--brand-night-forest);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --font-sans: var(--font-source-sans), system-ui, sans-serif;
+  --font-sans: var(--font-source-sans), "Source Sans 3", system-ui, sans-serif;
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -180,9 +186,18 @@
     font-size: 1.25rem;
     line-height: 1.75rem;
   }
+
+  ::selection {
+    background-color: rgb(88 129 87 / 25%);
+    color: var(--brand-charcoal);
+  }
+
+  .dark ::selection {
+    background-color: rgb(88 129 87 / 35%);
+    color: #ffffff;
+  }
 }
 
-/* Branded scrollbar */
 @layer utilities {
   .brand-gradient-auth {
     background: linear-gradient(
@@ -195,7 +210,15 @@
 
   .brand-card-elevated {
     box-shadow:
-      0 1px 3px rgb(52 78 65 / 8%),
-      0 4px 12px rgb(7 59 76 / 6%);
+      0 1px 3px rgb(52 78 65 / 10%),
+      0 4px 16px rgb(7 59 76 / 8%);
+  }
+
+  .brand-surface-subtle {
+    background: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 60%) 0%,
+      var(--brand-platinum) 100%
+    );
   }
 }

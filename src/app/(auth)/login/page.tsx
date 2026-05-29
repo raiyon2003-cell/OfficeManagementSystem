@@ -24,6 +24,24 @@ import { Input } from "@/components/ui/input";
 import { PageTransition } from "@/components/shared/page-transition";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const SAFE_REDIRECT_PATHS = ["/dashboard", "/visitors", "/meeting-rooms", "/inventory", "/documents", "/vendors", "/users", "/settings", "/notifications"];
+
+function resolveRedirectPath(redirect: string | null) {
+  if (!redirect || !redirect.startsWith("/") || redirect.startsWith("//")) {
+    return "/dashboard";
+  }
+
+  if (redirect === "/logout" || redirect.startsWith("/login")) {
+    return "/dashboard";
+  }
+
+  if (SAFE_REDIRECT_PATHS.some((path) => redirect === path || redirect.startsWith(`${path}/`))) {
+    return redirect;
+  }
+
+  return "/dashboard";
+}
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -41,7 +59,7 @@ function LoginForm() {
       const result = await login(data);
       setAuth(result.user, result.tokens);
       toast.success("Welcome back!");
-      const redirect = searchParams.get("redirect") ?? "/dashboard";
+      const redirect = resolveRedirectPath(searchParams.get("redirect"));
       router.push(redirect);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Login failed");

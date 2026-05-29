@@ -113,6 +113,19 @@ export async function POST(request: NextRequest) {
     );
   } catch (err) {
     console.error("Login error:", err);
+
+    const prismaCode =
+      err && typeof err === "object" && "code" in err
+        ? String((err as { code?: string }).code)
+        : "";
+
+    if (prismaCode === "P1001") {
+      return error(
+        "Cannot connect to the database. Check DATABASE_URL / DIRECT_URL in .env.local and ensure your Supabase project is active.",
+        { code: "DATABASE_UNAVAILABLE", status: 503 },
+      );
+    }
+
     return error("Login failed", { code: "LOGIN_FAILED", status: 500 });
   }
 }

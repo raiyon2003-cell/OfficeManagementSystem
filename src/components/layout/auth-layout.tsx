@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Building2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { APP_NAME } from "@/lib/constants";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -15,7 +16,7 @@ interface AuthLayoutProps {
 
 export function AuthLayout({
   children,
-  title = "Office Manager",
+  title = APP_NAME,
   description = "Sign in to manage your office operations",
   className,
 }: AuthLayoutProps) {
@@ -26,8 +27,8 @@ export function AuthLayout({
       <div
         className="absolute inset-0 opacity-30"
         style={{
-          backgroundImage: `radial-gradient(circle at 20% 50%, #588157 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, #28666e 0%, transparent 40%)`,
+          backgroundImage: `radial-gradient(circle at 20% 50%, var(--brand-lime) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, var(--brand-steel-teal) 0%, transparent 40%)`,
         }}
       />
 
@@ -37,11 +38,11 @@ export function AuthLayout({
         transition={{ duration: 0.4 }}
         className="relative z-10 mb-8 flex flex-col items-center gap-4 text-center"
       >
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#588157] text-white shadow-lg ring-4 ring-white/10">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-lime text-white shadow-lg ring-4 ring-white/10">
           <Building2 className="h-7 w-7" />
         </div>
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#819171]">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-olive">
             CONTEG
           </p>
           <h1 className="text-3xl font-semibold tracking-tight text-white">

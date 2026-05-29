@@ -5,6 +5,7 @@ import type { JwtAccessPayload } from "@/types";
 
 const PUBLIC_ROUTES = [
   "/login",
+  "/logout",
   "/forgot-password",
   "/reset-password",
   "/register",
@@ -74,7 +75,7 @@ export async function middleware(request: NextRequest) {
   if (isPublicRoute(pathname) || isPublicApiRoute(pathname)) {
     const accessToken = request.cookies.get(AUTH_COOKIE_NAMES.ACCESS_TOKEN)?.value;
 
-    if (accessToken && isPublicRoute(pathname)) {
+    if (accessToken && isPublicRoute(pathname) && pathname !== "/logout") {
       const payload = await verifyAccessTokenEdge(accessToken);
 
       if (payload) {
@@ -104,7 +105,9 @@ export async function middleware(request: NextRequest) {
     }
 
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
+    if (pathname !== "/logout") {
+      loginUrl.searchParams.set("redirect", pathname);
+    }
     return NextResponse.redirect(loginUrl);
   }
 

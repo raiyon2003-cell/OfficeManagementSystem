@@ -2,10 +2,13 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Bell, LogOut, Menu, Moon, Sun, User } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { cn } from "@/lib/utils";
+import { logout as logoutApi } from "@/lib/api/auth";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -38,12 +41,29 @@ export function Header({
   showMenuButton = false,
   className,
 }: HeaderProps) {
+  const router = useRouter();
+  const { logout: clearAuth } = useAuth();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+
+    try {
+      await logoutApi();
+    } catch {
+      // Still sign out locally if the API call fails.
+    } finally {
+      clearAuth();
+      router.replace("/login");
+    }
+  };
 
   const initials = user.name
     .split(" ")
@@ -148,14 +168,13 @@ export function Header({
               <Link href="/settings">Settings</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link
-                href="/logout"
-                className="text-destructive focus:text-destructive"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Log out
-              </Link>
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              disabled={isLoggingOut}
+              onClick={() => void handleLogout()}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              {isLoggingOut ? "Signing out..." : "Log out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

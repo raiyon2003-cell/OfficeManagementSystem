@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import type { EventInput } from "@fullcalendar/core";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { BOOKING_STATUS_COLORS } from "@/lib/brand";
 import type { RoomBooking } from "@/types/entities";
 
 const CalendarView = dynamic(
@@ -38,10 +39,10 @@ export function RoomCalendar({
         extendedProps: { booking },
         backgroundColor:
           booking.status === "CONFIRMED"
-            ? "hsl(142 76% 36%)"
+            ? BOOKING_STATUS_COLORS.CONFIRMED
             : booking.status === "PENDING"
-              ? "hsl(45 93% 47%)"
-              : "hsl(220 70% 50%)",
+              ? BOOKING_STATUS_COLORS.PENDING
+              : BOOKING_STATUS_COLORS.default,
       })),
     [bookings],
   );

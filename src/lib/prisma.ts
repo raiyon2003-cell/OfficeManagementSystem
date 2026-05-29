@@ -14,12 +14,9 @@ function createPrismaClient(): PrismaClient {
     });
   }
 
-  // Local dev: direct connection is more reliable with Supabase.
-  // Production (Vercel): use pooled DATABASE_URL (port 6543).
+  // Runtime: pooled DATABASE_URL (Supabase port 6543). DIRECT_URL is for migrations only.
   const connectionString =
-    process.env.NODE_ENV === "development" && process.env.DIRECT_URL
-      ? process.env.DIRECT_URL
-      : process.env.DATABASE_URL ?? process.env.DIRECT_URL;
+    process.env.DATABASE_URL ?? process.env.DIRECT_URL;
 
   if (!connectionString) {
     throw new Error("DATABASE_URL or DIRECT_URL environment variable is not set");

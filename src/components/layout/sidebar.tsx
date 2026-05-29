@@ -29,7 +29,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { Role } from "@/types";
-import { ROLES } from "@/lib/constants";
+import { APP_NAME, ROLES } from "@/lib/constants";
 
 export interface NavItem {
   title: string;
@@ -98,7 +98,7 @@ export function Sidebar({
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-semibold leading-tight text-sidebar-foreground">
-                  Office Manager
+                  {APP_NAME}
                 </span>
                 <span className="text-[10px] font-normal uppercase tracking-wider text-sidebar-muted">
                   CONTEG

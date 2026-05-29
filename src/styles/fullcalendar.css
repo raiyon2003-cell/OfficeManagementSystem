@@ -1,26 +1,28 @@
 /* FullCalendar — CONTEG brand styling */
 .fc {
   --fc-border-color: var(--border);
-  --fc-button-bg-color: #588157;
-  --fc-button-border-color: #588157;
-  --fc-button-hover-bg-color: #4a6f49;
-  --fc-button-hover-border-color: #4a6f49;
-  --fc-button-active-bg-color: #344e41;
-  --fc-button-active-border-color: #344e41;
+  --fc-button-bg-color: var(--brand-lime);
+  --fc-button-border-color: var(--brand-lime);
+  --fc-button-hover-bg-color: var(--brand-charcoal);
+  --fc-button-hover-border-color: var(--brand-charcoal);
+  --fc-button-active-bg-color: var(--brand-deep-teal);
+  --fc-button-active-border-color: var(--brand-deep-teal);
   --fc-today-bg-color: rgb(88 129 87 / 12%);
-  --fc-event-bg-color: #588157;
-  --fc-event-border-color: #344e41;
+  --fc-event-bg-color: var(--brand-lime);
+  --fc-event-border-color: var(--brand-charcoal);
   --fc-page-bg-color: var(--card);
   --fc-neutral-bg-color: var(--muted);
   font-family: var(--font-sans), "Source Sans 3", system-ui, sans-serif;
 }
 
 .dark .fc {
-  --fc-button-bg-color: #588157;
-  --fc-button-border-color: #588157;
+  --fc-button-bg-color: var(--brand-lime);
+  --fc-button-border-color: var(--brand-lime);
+  --fc-button-hover-bg-color: var(--brand-steel-teal);
+  --fc-button-hover-border-color: var(--brand-steel-teal);
   --fc-today-bg-color: rgb(88 129 87 / 18%);
-  --fc-event-bg-color: #588157;
-  --fc-event-border-color: #28666e;
+  --fc-event-bg-color: var(--brand-lime);
+  --fc-event-border-color: var(--brand-steel-teal);
 }
 
 .fc .fc-toolbar-title {
@@ -61,10 +63,10 @@
 }
 
 .fc .fc-timegrid-now-indicator-line {
-  border-color: #28666e;
+  border-color: var(--brand-steel-teal);
 }
 
 .fc .fc-timegrid-now-indicator-arrow {
-  border-color: #28666e;
-  color: #28666e;
+  border-color: var(--brand-steel-teal);
+  color: var(--brand-steel-teal);
 }

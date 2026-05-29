@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   },
   description:
     "Enterprise office management for visitors, rooms, inventory, and procurement",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ebeee8" },
+    { media: "(prefers-color-scheme: dark)", color: "#344e41" },
+  ],
 };
 
 export default function RootLayout({
