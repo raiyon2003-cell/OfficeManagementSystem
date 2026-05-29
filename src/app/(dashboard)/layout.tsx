@@ -19,7 +19,7 @@ export default function DashboardRouteLayout({
 
   const { data: notifications } = useQuery({
     queryKey: ["notifications", "unread-count"],
-    queryFn: () => getNotifications({ limit: 1, page: 1 }),
+    queryFn: () => getNotifications({ limit: 1, page: 1, unreadOnly: true }),
     enabled: isAuthenticated,
     refetchInterval: 60000,
   });
@@ -42,7 +42,7 @@ export default function DashboardRouteLayout({
     return null;
   }
 
-  const unreadCount = notifications?.data.filter((n) => !n.isRead).length ?? 0;
+  const unreadCount = notifications?.meta.total ?? 0;
 
   return (
     <DashboardLayout

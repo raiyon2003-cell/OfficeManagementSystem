@@ -4,10 +4,17 @@ import type { NotificationItem } from "@/types";
 import type { ListParams } from "@/types/entities";
 import { buildQueryParams, unwrapPaginated } from "@/lib/api/client-helpers";
 
-export async function getNotifications(params?: ListParams) {
+export async function getNotifications(
+  params?: ListParams & { unreadOnly?: boolean },
+) {
   const response = await apiClient.get<PaginatedResponse<NotificationItem>>(
     "/notifications",
-    { params: buildQueryParams(params) },
+    {
+      params: {
+        ...buildQueryParams(params),
+        ...(params?.unreadOnly ? { unreadOnly: "true" } : {}),
+      },
+    },
   );
   return unwrapPaginated(response);
 }
